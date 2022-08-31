@@ -1,25 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import Notes from "./components/Notes";
+import NewNote from "./components/NewNote";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      notes: [],
+      isLoading: false,
+    };
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = () => {
+    this.setState({
+      isLoading: true,
+    });
+    fetch(process.env.REACT_APP_NOTES_URL)
+      .then((response) => response.json())
+      .then((result) => {
+        this.setState({
+          notes: result,
+          isLoading: false,
+        });
+      });
+  };
+
+  postData = (note) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: note.id, content: note.content }),
+    };
+    fetch(process.env.REACT_APP_NOTES_URL, requestOptions).then(() =>
+      this.loadData()
+    );
+  };
+
+  deleteData = (id) => {
+    const requestOptions = {
+      method: "DELETE",
+    };
+    fetch(`${process.env.REACT_APP_NOTES_URL}/${id}`, requestOptions).then(() =>
+      this.loadData()
+    );
+  };
+
+  render() {
+    return (
+      <div className="container">
+        <header>
+          <nav className="navbar navbar-light justify-content-start bg-light">
+            <span className="navbar-brand mb-0 h1">Notes</span>
+            <button
+              type="button"
+              className="btn btn-outline-success"
+              onClick={this.loadData}
+            >
+              <i className="bi bi-arrow-repeat"></i>
+            </button>
+            <div className="mx-3">{this.state.isLoading && <progress />}</div>
+          </nav>
+        </header>
+
+        <Notes notes={this.state.notes} remove={this.deleteData} />
+        <NewNote createNote={this.postData} />
+      </div>
+    );
+  }
 }
-
-export default App;
