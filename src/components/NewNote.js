@@ -6,6 +6,7 @@ function NewNote(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     props.createNote({ id: 0, content: noteRef.current.value });
+    noteRef.current.value = "";
   };
 
   return (
@@ -17,12 +18,12 @@ function NewNote(props) {
       <div className="row align-items-end">
         <div className="col-auto">
           <div className="form-group mb-2">
-            <label htmlFor="exampleFormControlTextarea1" className="sr-only">
+            <label htmlFor="textArea" className="sr-only">
               New Note
             </label>
             <textarea
               className="form-control"
-              id="exampleFormControlTextarea1"
+              id="textArea"
               rows="3"
               ref={noteRef}
               required
@@ -31,7 +32,7 @@ function NewNote(props) {
         </div>
         <div className="col-auto">
           <button type="submit" className="btn btn-primary mb-2">
-            <i className="bi bi-send-fill"></i>
+            <span class="material-icons">send</span>
           </button>
         </div>
       </div>

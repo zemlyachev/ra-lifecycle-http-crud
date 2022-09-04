@@ -10,6 +10,7 @@ export default class App extends Component {
     this.state = {
       notes: [],
       isLoading: false,
+      isError: false,
     };
   }
 
@@ -27,6 +28,13 @@ export default class App extends Component {
         this.setState({
           notes: result,
           isLoading: false,
+          isError: false,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          isLoading: false,
+          isError: true,
         });
       });
   };
@@ -64,9 +72,12 @@ export default class App extends Component {
               className="btn btn-outline-success"
               onClick={this.loadData}
             >
-              <i className="bi bi-arrow-repeat"></i>
+              <span class="material-icons">sync</span>
             </button>
             <div className="mx-3">{this.state.isLoading && <progress />}</div>
+            <div className="mx-3 text-danger">
+              {this.state.isError && "Loading error"}
+            </div>
           </nav>
         </header>
 
